@@ -1,9 +1,12 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class LoadBalancer extends ServerSocket {
-
+	ExecutorService executorService = Executors.newFixedThreadPool(10);
+	
 	
 	LoadBalancingStrategy strategy;
 	
@@ -29,10 +32,29 @@ public void start () throws Exception  {
 	System.out.println("Wait for Clients ...");
 
 	while(true) {
-		
+		System.out.println("wait for new client");
 		Socket client=this.accept();//connection established
 		System.out.println("client connected : "+client.getPort()+" | "+client.hashCode());
-		BufferedReader requestReaderFromClient=new BufferedReader(new InputStreamReader(client.getInputStream()));
+	//get a free thread from the thread pool
+		executorService.execute(new ProxyHandling(client));
+		
+		
+		
+	}
+	
+}
+class ProxyHandling implements Runnable{
+	Socket client;
+	public ProxyHandling(Socket c) {
+		client=c;
+	}
+
+	@Override
+	public void run() {
+		BufferedReader requestReaderFromClient;
+		try {
+			requestReaderFromClient = new BufferedReader(new InputStreamReader(client.getInputStream()));
+		
 		String line=""; 
 		
 		
@@ -47,9 +69,13 @@ public void start () throws Exception  {
 	line=requestReaderFromClient.readLine();
 	String path=line.split(" ")[1];
 	
-int port =strategy.getHost(path);
+String host =strategy.getHost(path); //exemple :192.168.1.100:80
+System.out.println(" host : "+host);
+int port=Integer.parseInt(host.split(":")[1]);
+String ip=host.split(":")[0];
+
 System.out.println("port : "+port+" | path : "+path);
-	Socket server=new Socket("localhost",port);
+	Socket server=new Socket(ip,port);
 	OutputStream requestForwarderToServer=server.getOutputStream();
 	PrintWriter pw=new PrintWriter(requestForwarderToServer,true);
 	BufferedReader responseReaderFromServer=new BufferedReader(new InputStreamReader(server.getInputStream()));
@@ -99,8 +125,16 @@ System.out.println(line);
 	server.close();
 		System.out.println("closed   connection ?? : "+server.isClosed());
 		System.out.println("end of Program !");
-
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
-	
 }
+
+
+
+
 }
+

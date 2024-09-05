@@ -2,7 +2,7 @@
 public interface LoadBalancingStrategy {
 	
 	
-	public int getHost(String contextPath);
+	public String getHost(String contextPath);
 	
 	
 

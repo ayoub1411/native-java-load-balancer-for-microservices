@@ -6,7 +6,7 @@ public class RoundRobinStrategy implements LoadBalancingStrategy {
 
 
 Map<String,Integer> currentIp=new HashMap();
-Map<String,List<Integer>> servers=new HashMap();
+Map<String,List<String>> servers=new HashMap();
 
 //{
 //	
@@ -39,16 +39,16 @@ public void loadProperties() {
         properties.load(input);
 
         for (String key : properties.stringPropertyNames()) {
-            // Get the ports and split by comma
-            String[] ports = properties.getProperty(key).split(",");
-            List<Integer> portList = new ArrayList<>();
+           
+            String[] hosts = properties.getProperty(key).split(",");
+            List<String> serveurs = new ArrayList<>();
 
-            for (String port : ports) {
-                portList.add(Integer.parseInt(port));
+            for (String host : hosts) {
+               serveurs.add(host);
             }
 
             // Populate the servers map
-            servers.put("/" + key, portList);
+            servers.put("/" + key, serveurs);
 
             // Initialize currentIp map with zero for each service
             currentIp.put("/" + key, 0);
@@ -58,7 +58,7 @@ public void loadProperties() {
     }
 }
 	@Override
-	public int getHost(String path) {
+	public String getHost(String path) {
 	
 	System.out.println("path : "+path);
 	
@@ -75,7 +75,7 @@ for(String key:servers.keySet()) {
 	
 }
 System.out.println(service);
-int port=servers
+String host=servers
 .get(service)//list of port
 .get(currentIp
 		.get(service));
@@ -86,7 +86,7 @@ this.currentIp
 		(currentIp.get(service)+1)%servers.get(service).size());
 
 		
-		return port;
+		return host;
 	}
 
 }
