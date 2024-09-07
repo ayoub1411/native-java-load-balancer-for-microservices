@@ -18,7 +18,7 @@ public class LoadBalancer extends ServerSocket {
 		
 	}
 	public static void main(String [] args) throws Exception {
-		new LoadBalancer(1411,new RoundRobinStrategy() ).start();;
+		new LoadBalancer(1411,new WeightedRoundRobinStrategy() ).start();;
 	}
 public LoadBalancer(int port,LoadBalancingStrategy strategy) throws IOException {
 		
@@ -70,11 +70,11 @@ class ProxyHandling implements Runnable{
 	String path=line.split(" ")[1];
 	
 String host =strategy.getHost(path); //exemple :192.168.1.100:80
-System.out.println(" host : "+host);
+System.out.println("***********host : "+host+"**************");
 int port=Integer.parseInt(host.split(":")[1]);
 String ip=host.split(":")[0];
 
-System.out.println("port : "+port+" | path : "+path);
+//System.out.println("port : "+port+" | path : "+path);
 	Socket server=new Socket(ip,port);
 	OutputStream requestForwarderToServer=server.getOutputStream();
 	PrintWriter pw=new PrintWriter(requestForwarderToServer,true);
@@ -93,18 +93,18 @@ System.out.println("port : "+port+" | path : "+path);
 		request+="\r\n";
 		
 	pw.print("\r\n");
-				
-		System.out.println("REQUEST : ");
-		System.out.println(request);
+//				
+//		System.out.println("REQUEST : ");
+//		System.out.println(request);
 		
 		
 		//requestForwarderToServer.write(request.getBytes());
 		pw.flush();
 		requestForwarderToServer.flush();
-		System.out.println("end of Forward !");
+		//System.out.println("end of Forward !");
 		
 		
-		System.out.println("response : ");
+		//System.out.println("response : ");
 		int c=0;
 		char data;
 //supose that transfer-encoding is chucked instead of content-length:number
@@ -113,7 +113,7 @@ System.out.println("port : "+port+" | path : "+path);
 		
 
 	
-System.out.println(line);
+//System.out.println(line);
 	
 		pw2.println(line);
 		
@@ -123,8 +123,8 @@ System.out.println(line);
 	pw2.flush();//flusher le buffer
 	client.close();
 	server.close();
-		System.out.println("closed   connection ?? : "+server.isClosed());
-		System.out.println("end of Program !");
+//		System.out.println("closed   connection ?? : "+server.isClosed());
+//		System.out.println("end of Program !");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
