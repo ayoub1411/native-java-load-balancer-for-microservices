@@ -8,6 +8,7 @@ public class RoundRobinStrategy implements LoadBalancingStrategy {
 Map<String,Integer> currentIp=new HashMap();
 Map<String,List<String>> servers=new HashMap();
 
+
 //{
 //	
 //servers.put("/microservice-product",List.of(5001,5002));
@@ -18,7 +19,7 @@ Map<String,List<String>> servers=new HashMap();
 //currentIp.put("/microservice-customer", 0);
 //
 //
-//}
+//}s
 
 {
 this.loadProperties();	
@@ -29,7 +30,7 @@ public void loadProperties() {
     
     
 
-    try (InputStream input =this.getClass().getClassLoader().getResourceAsStream("servers.properties")) {
+    try (InputStream input =this.getClass().getClassLoader().getResourceAsStream("config1.properties")) {
         if (input == null) {
             System.out.println("Sorry, unable to find servers.properties");
             return;

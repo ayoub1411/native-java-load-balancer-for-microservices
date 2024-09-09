@@ -16,16 +16,22 @@ class ServerInfo{
 	
 	
 }
-public class WeightedRoundRobinStrategy implements LoadBalancingStrategy {
 
+
+public class WeightedRoundRobinStrategy implements LoadBalancingStrategy {
+	
   Map<String,List<ServerInfo>> servers=new HashMap();
   Map<String,Integer> currentServers=new HashMap();
   {
+	  this.loadServers();
 	  
-	  servers.put("/microservice-customer",
-			  List.of(new ServerInfo("localhost:5003",3)
-					  ,new ServerInfo("localhost:5004",2)));
-	  this.currentServers.put("/microservice-customer", 0);
+	  for(String k:this.servers.keySet()) {
+		  System.out.println("service : "+k);
+	  }
+//	  servers.put("/microservice-customer",
+//			  List.of(new ServerInfo("localhost:5003",3)
+//					  ,new ServerInfo("localhost:5004",2)));
+//	  this.currentServers.put("/microservice-customer", 0);
 	  
 	  
 	//servers.put("/microservice-product",List.of(5001,5002));
@@ -56,7 +62,7 @@ public class WeightedRoundRobinStrategy implements LoadBalancingStrategy {
      }
    //  System.out.println("service found : "+service);
      
-   
+   System.out.println("error : "+service);
      
      int currentServer=this.currentServers.get(service);
     
@@ -76,4 +82,31 @@ public class WeightedRoundRobinStrategy implements LoadBalancingStrategy {
 
         return serverInfo.host ;
     }
+    
+private void loadServers() {
+		
+		InputStream is=this.getClass().getClassLoader().getResourceAsStream("config2.properties");
+		System.out.println("filee : "+this.getClass().getClassLoader().getResource("config2.properties"));
+
+		Properties properties=new Properties();
+		try {
+			properties.load(is);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    for (String key : properties.stringPropertyNames()) {
+	    	System.out.println(key);
+	        String[] serverEntries = properties.getProperty(key).split(",");
+	        List<ServerInfo> serverList = new ArrayList<>();
+	        for (String entry : serverEntries) {
+	            String[] parts = entry.split(":");
+	            String host = parts[0] + ":" + parts[1];
+	            int weight = Integer.parseInt(parts[2]);
+	            serverList.add(new ServerInfo(host, weight));
+	        }
+	        this.servers.put("/"+key, serverList);
+	        this.currentServers.put("/"+key, 0);
+	    }
+	}
 }

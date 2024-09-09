@@ -18,7 +18,9 @@ public class LoadBalancer extends ServerSocket {
 		
 	}
 	public static void main(String [] args) throws Exception {
-		new LoadBalancer(1411,new WeightedRoundRobinStrategy() ).start();;
+		
+		
+		new LoadBalancer(1411,new RoundRobinStrategy() ).start();;
 	}
 public LoadBalancer(int port,LoadBalancingStrategy strategy) throws IOException {
 		
