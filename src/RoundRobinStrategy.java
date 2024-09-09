@@ -3,7 +3,9 @@ import java.sql.DriverManager;
 import java.util.*;
 
 public class RoundRobinStrategy implements LoadBalancingStrategy {
-
+	{
+		System.out.println("round robin created !");
+	}
 
 Map<String,Integer> currentIp=new HashMap();
 Map<String,List<String>> servers=new HashMap();

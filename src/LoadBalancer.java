@@ -1,35 +1,30 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class LoadBalancer extends ServerSocket {
 	
-	ExecutorService executorService = Executors.newFixedThreadPool(10);
+	ExecutorService executorService =null;
 	
 	
 	LoadBalancingStrategy strategy;
 	
-	
-	public LoadBalancer(LoadBalancingStrategy strategy) throws IOException {
-		
-		super();
-		this.strategy=strategy;
-		
-	}
-	public static void main(String [] args) throws Exception {
+
+	public LoadBalancer() throws Exception {
 		
 		
-		new LoadBalancer(1411,new RoundRobinStrategy() ).start();;
-	}
-public LoadBalancer(int port,LoadBalancingStrategy strategy) throws IOException {
-		
-		super(port);
-		this.strategy=strategy;
+	super(AutoConfigurationService.loadPortFromGlobalConfig());
+    this.strategy=AutoConfigurationService.loadStrategyFromConfig();
+    int maxThreads=AutoConfigurationService.loadMaxThreadsFromGlobalConfig();
+    this.executorService= Executors.newFixedThreadPool(maxThreads);
 		
 		
 	}
+
+
 
 public void start () throws Exception  {
 	System.out.println("Wait for Clients ...");

@@ -20,6 +20,12 @@ class ServerInfo{
 
 public class WeightedRoundRobinStrategy implements LoadBalancingStrategy {
 	
+	{
+		
+		System.out.println("weitghed round robin created !");
+		
+	}
+	
   Map<String,List<ServerInfo>> servers=new HashMap();
   Map<String,Integer> currentServers=new HashMap();
   {
