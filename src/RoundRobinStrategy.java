@@ -34,11 +34,11 @@ public void loadProperties() {
 
     try (InputStream input =this.getClass().getClassLoader().getResourceAsStream("config1.properties")) {
         if (input == null) {
-            System.out.println("Sorry, unable to find servers.properties");
+            System.out.println("Sorry, unable to find config1.properties :(");
             return;
         }
 
-        // Load the properties file
+     
         properties.load(input);
 
         for (String key : properties.stringPropertyNames()) {
@@ -50,10 +50,9 @@ public void loadProperties() {
                serveurs.add(host);
             }
 
-            // Populate the servers map
             servers.put("/" + key, serveurs);
 
-            // Initialize currentIp map with zero for each service
+            
             currentIp.put("/" + key, 0);
         }
     } catch (IOException ex) {
@@ -78,17 +77,16 @@ for(String key:servers.keySet()) {
 	
 }
 System.out.println(service);
-String host=servers
-.get(service)//list of port
-.get(currentIp
-		.get(service));
+
+String host=servers.get(service)//list of hosts
+				   .get(currentIp.get(service));
 
 
-this.currentIp
-.put(service,
+this.currentIp.put(service,
+		
 		(currentIp.get(service)+1)%servers.get(service).size());
 
-		
+	
 		return host;
 	}
 

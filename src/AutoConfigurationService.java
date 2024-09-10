@@ -15,7 +15,7 @@ public class AutoConfigurationService {
 	    properties.load(input);
 	    String strategyClassName = properties.getProperty("strategy");
 
-	    // Dynamically instantiate the strategy class using reflection
+	    
 	    Class<?> strategyClass = Class.forName(strategyClassName);
 	    return (LoadBalancingStrategy) strategyClass.getDeclaredConstructor().newInstance();
 	}
